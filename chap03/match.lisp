@@ -125,3 +125,4 @@
 ; (match6 '((* X) wild (? y) (* z)) '(* specifies a wild card sequence element))
 ; => T, X = (* specifies a), Y = card e Z = (sequence element)
 
+(defun match(p s) (match6 p s))
