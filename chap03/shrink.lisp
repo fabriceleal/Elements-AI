@@ -1,5 +1,8 @@
 (load "match.lisp")
 
+; The shrink program.
+; The shrink has a very short "memory" - it responds with knowledge of only one input.
+
 ; Helper functions, prints a list without parentheses
 
 ; Friendly printer of a list
