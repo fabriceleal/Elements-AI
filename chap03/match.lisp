@@ -83,8 +83,6 @@
 ; (match5 '((numberp x) 2 3 4) '(1111 2 3 4)) => T, and x = 1111
 ; (match5 '((?  2x) 3 4) '(1 2 3 4)) => T, and x = 1
 
-; TODO: MATCH6 INCOMPLETE!!!
-
 (defun match6 (p s)
         (cond
                 ((null p) (null s)) ; if both are null, match!
@@ -92,24 +90,38 @@
                 ((atom (car p)) ; head of p must be an atom
 		 (and s ; s must be not null
 		 	(equal (car p) (car s)) ; the heads of p and s must match, and if they do ...
-                 	(match6 (cdr p) (cdr s)) ) ; ... try match the rest.
+                 	(match6 (cdr p) (cdr s)) ) ) ; ... try match the rest.
 ; From here, the car of p is non-atomic
                 ; MATCH ANYTHING WITH A ?, SET TO THE VAR 
                 ((and
-                        (equal (length (car p)) 2) ; The head of p should be a sublist of length 2
-                        (eq (caar p) '?) ; The head of the head of p should be qual to an ?
-                        (match6 (cdr p) (cdr s)) ) ; The tail of p should match the tail of s
-                 (set (cadar p) (car s)) ; Set the head of the tail of the head of p(the second element of (car p) ) to the value of the head of s
-                 t ) ; ... and return true
-                ; MATCH WITH A PREDICATE, SET TO THE VAR ON SUCCESS
+			s ; s is not null
+                        (eq (caar p) '?) ) ; The head of the head of p should be qual to an ?
+
+                 (cond ((match6 (cdr p) (cdr s))
+			(set (cadar p) (car s))
+			t)
+			(t nil)) )	
+		; MATCH WITH *
+		((eq (caar p) '*)
+		 (cond 
+			((and s (match6 (cdr p) (cdr s))) 	; subcase 1
+			 (set (cadar p) (list (car s))) t )
+			((match6 (cdr p) s) 			; subcase2
+			 (set (cadar p) nil) t )
+			((and s (match6 p (cdr s)))		; subcase 3
+			 (set (cadar p) (cons (car s) (eval (cadar p)))) t )
+			(t nil) ) )
+
+		; MATCH WITH A PREDICATE, SET TO THE VAR ON SUCCESS
                 ((and
-                        (equal (length (car p)) 2) ; The head of p should be a sublist of length 2
-                        (null (eq (caar p) '?)) ; Tries to do a "any" matching
+			s ; s not null
                         (apply (caar p) (list (car s))) ; Applies the predicate supplied to the element to match
                         (match6 (cdr p) (cdr s)) ) ; The tail of p should match the tail of s
                  (set (cadar p) (car s)) ; Set the head of the tail of the head of p(the second element of (car p) ) to the value of the head of s
                  t ) ; ... and return true
-
                 (t nil)  ; extremal clause
                 ) )
+
+; (match6 '((* X) wild (? y) (* z)) '(* specifies a wild card sequence element))
+; => T, X = (* specifies a), Y = card e Z = (sequence element)
 
