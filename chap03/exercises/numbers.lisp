@@ -2,8 +2,7 @@
 (defun german_map_name (nbr) ; 1 .. 9
 	(nth (- nbr 1) '(eins zwei drei vier fünf sechs sieben acht neun)))
 
-
-
+; NOTE: mine doesn't work with zeros!
 (defun german_nos ()
 	(prog (x) 
 	my_loop
@@ -39,3 +38,11 @@
 			((> x 0)  (princ (german_map_name x)) (terpri) (setq x 0)) )
 
 		(go my_loop) ) )
+
+; I don't really fell like doing those :P
+
+(defun french_map_name (nbr) 
+	'number)
+
+(defun french_nos ()
+	nil)
