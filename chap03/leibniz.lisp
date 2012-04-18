@@ -160,13 +160,37 @@
 	) )
 
 (setq rules (list diff_plus_rule diff_x_rule diff_const_rule
-	diff_product_rule diff_power_rule goal_change_rulw
+	diff_product_rule diff_power_rule goal_change_rule
 	sub1_rule exp0_rule exp1_rule
 	times1_rule one_times_rule
 	times0_rule zero_times_rule
 	plus0_rule zero_plus_rule
 	constant_addition_rule constant_multiplication_rule
 	) )
+
+(defun try_rule1 (expression)
+        (cond
+                ((atom expression) nil)
+                ((match pattern expression)
+                 (fire) )
+                (t (try_rule_on_list expression)) ) )
+
+(defun try_rule_on_list (expression_list)
+        (cond ((null expression_list) nil)
+                ((setq temp (try_rule1 (car expression_list)))
+                 (cons temp (cdr expression_list)) )
+                ((setq temp (try_rule_on_list (cdr expression_list)))
+                 (cons (car expression_list) temp) )
+                (t nil) ) )
+
+
+(defun try_rule (rule expression)
+        (prog (rule_goal pattern action)
+                (setq rule_goal (car rule))
+                (setq pattern (cadr rule))
+                (setq action (caddr rule))
+                (cond ((not (eq current_goal rule_goal)) (return nil)))
+                (return (try_rule1 expression)) ) )    
 
 
 (defun try_rules (rules_left)
@@ -178,8 +202,22 @@
 		(t (try_rules (cdr rules_left)))
 		) )
 
+
+(defun fire ()
+	(prog ()
+		(princ (caddr (cdr rule)))
+		(princ " ")
+		(princ 'fires)
+		(return (eval action))
+		) )
+
 (defun control()
 	(prog ()
 	my_loop (cond ((not (try_rules rules))
 			(return current_formula) ))
 		(go my_loop)) )
+
+(setq current_goal 'differentiate)
+(setq fo '(d (+ (expt x 2) (* 2 x)) x))
+(setq current_formula fo)
+
