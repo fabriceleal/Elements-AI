@@ -4,6 +4,16 @@
 ; a little progress is made towards the solution of a relatively complicated
 ; problem.
 
+
+; ATTENTION:
+; This code does not exactly match the one in the book. I had to debug it, and after
+; trying to use most of the variables as parameters (instead of global vars >:( ...)
+; I found that, in a rule, if you have lambdas inside the pattern, one must not 
+; use the '(...) operator, instead the `(...) operator should be used, and the comma
+; operator should be used to force evaluation of the lambdas. The dialect of lisp
+; used in the book is kinda weird ...
+
+
 ; TODO: Exercise to me: make this work with an arbitrary number of parameters
 
 ; production rules: (current_goal pattern transformation rule_name)
@@ -166,19 +176,19 @@
 	diff_product_rule 
 	diff_power_rule 
 	
-	;goal_change_rule
+	goal_change_rule
 	
-	;sub1_rule 
-	;exp0_rule 
-	;exp1_rule
-	;times1_rule 
-	;one_times_rule
-	;times0_rule 
-	;zero_times_rule
-	;plus0_rule 
-	;zero_plus_rule
-	;constant_addition_rule 
-	;constant_multiplication_rule
+	sub1_rule 
+	exp0_rule 
+	exp1_rule
+	times1_rule 
+	one_times_rule
+	times0_rule 
+	zero_times_rule
+	plus0_rule 
+	zero_plus_rule
+	constant_addition_rule 
+	constant_multiplication_rule
 	) )
 
 (defun fire (rule)
@@ -188,8 +198,8 @@
                 (princ " ") 
                 (princ 'fires)
 		(terpri)
-		(print (caddr rule))
-		(terpri)
+		;(print (caddr rule))
+		;(terpri)
                 (return (eval (caddr rule))) ; Returns action
                 ) )
 
@@ -253,8 +263,8 @@
 (setq current_formula fo)
 
 ;(trace control)
-(trace try_rules)
-(trace try_rule)
-(trace try_rule1)
-(trace try_rule_on_list)
-(trace fire)
+;(trace try_rules)
+;(trace try_rule)
+;(trace try_rule1)
+;(trace try_rule_on_list)
+;(trace fire)
