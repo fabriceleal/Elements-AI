@@ -23,9 +23,9 @@
 	diff_plus_rule
 	) )
 
-(setq diff_x_rule '(
+(setq diff_x_rule `(
 	differentiate
-	(d ((lambda(v)(setq e1 v)) e1) ((lambda(v)(eq v e1)) e2))
+	(d (,(lambda(v)(setq e1 v)) e1) (,(lambda(v)(eq v e1)) e2))
 	1
 	diff_x_rule
 	) )
@@ -36,18 +36,18 @@
 		((no_v1 (car f) v1) (no_v1 (cdr f) v1))
 		(t nil) ) )
 
-(setq diff_const_rule '(
+(setq diff_const_rule `(
 	differentiate
-	(d ((lambda(f)(setq e1 f)) f)
-		((lambda(v1)(no_v1 e1 v1)) v1) )
+	(d (,(lambda(f)(setq e1 f)) f)
+		(,(lambda(v1)(no_v1 e1 v1)) v1) )
 	0
 	diff_const_rule
 	) )
 
-(setq diff_product_rule '(
+(setq diff_product_rule `(
 	differentiate
 	(d 
-		((lambda (f)
+		(,(lambda (f)
 			(and (not (atom f))
 				(match '(* (? e1) (? e2)) f)) ) e3)
 		(? v1) )
@@ -58,10 +58,10 @@
 	) )
 
 
-(setq diff_power_rule '(
+(setq diff_power_rule `(
 	differentiate
 	(d
-		((lambda (f) 
+		(,(lambda (f) 
 			(and (not (atom f))
 				(match '(expt (? e1) (numberp e2)) f)) ) e3)
 		(? v1) )
@@ -159,13 +159,26 @@
 	goal_change_rule
 	) )
 
-(setq rules (list diff_plus_rule diff_x_rule diff_const_rule
-	diff_product_rule diff_power_rule goal_change_rule
-	sub1_rule exp0_rule exp1_rule
-	times1_rule one_times_rule
-	times0_rule zero_times_rule
-	plus0_rule zero_plus_rule
-	constant_addition_rule constant_multiplication_rule
+(setq rules (list 
+	diff_plus_rule 
+	diff_x_rule 
+	diff_const_rule
+	diff_product_rule 
+	diff_power_rule 
+	
+	;goal_change_rule
+	
+	;sub1_rule 
+	;exp0_rule 
+	;exp1_rule
+	;times1_rule 
+	;one_times_rule
+	;times0_rule 
+	;zero_times_rule
+	;plus0_rule 
+	;zero_plus_rule
+	;constant_addition_rule 
+	;constant_multiplication_rule
 	) )
 
 (defun fire (rule)
@@ -174,7 +187,10 @@
                 (princ (caddr (cdr rule))) ; Logs
                 (princ " ") 
                 (princ 'fires)
-                (return (caddr rule)) ; Returns action
+		(terpri)
+		(print (caddr rule))
+		(terpri)
+                (return (eval (caddr rule))) ; Returns action
                 ) )
 
 (defun try_rule_on_list (expression_list pattern rule)
@@ -228,7 +244,7 @@
 
 (defun control()
 	(prog ()
-	my_loop (cond ((not (try_rules rules))
+	my_loop (cond ((null (try_rules rules))
 			(return current_formula) ))
 		(go my_loop)) )
 
@@ -237,8 +253,8 @@
 (setq current_formula fo)
 
 ;(trace control)
-;(trace try_rules)
-;(trace try_rule)
-;(trace try_rule1)
-;(trace try_rule_on_list)
-;(trace fire)
+(trace try_rules)
+(trace try_rule)
+(trace try_rule1)
+(trace try_rule_on_list)
+(trace fire)
