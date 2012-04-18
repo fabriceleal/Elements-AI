@@ -19,7 +19,7 @@
 (setq diff_plus_rule '(
 	differentiate
 	(d (plusform f1) (? v1))
-	(list 'plus (list 'd e1 v1) (list 'd e2 v1))
+	(list '+ (list 'd e1 v1) (list 'd e2 v1))
 	diff_plus_rule
 	) )
 
@@ -168,47 +168,62 @@
 	constant_addition_rule constant_multiplication_rule
 	) )
 
-(defun try_rule1 (expression)
-        (cond
-                ((atom expression) nil)
-                ((match pattern expression)
-                 (fire) )
-                (t (try_rule_on_list expression)) ) )
+(defun fire (rule)
+	; Fires a rule
+        (prog ()
+                (princ (caddr (cdr rule))) ; Logs
+                (princ " ") 
+                (princ 'fires)
+                (return (caddr rule)) ; Returns action
+                ) )
 
-(defun try_rule_on_list (expression_list)
-        (cond ((null expression_list) nil)
-                ((setq temp (try_rule1 (car expression_list)))
+(defun try_rule_on_list (expression_list pattern rule)
+	; Tries to apply the rule to each element on expression_list.
+	; Returns NIL if the rule cannot be applied in any of the expressions
+	; or their subexpressions. Otherwise returns the list with one 
+	; replacement: the first expression in which the rule can be applied
+	; is replaced by the result of applying the rule in it
+        (cond 
+		((null expression_list) nil)
+                ((setq temp (try_rule1 (car expression_list) pattern rule))
                  (cons temp (cdr expression_list)) )
-                ((setq temp (try_rule_on_list (cdr expression_list)))
+                ((setq temp (try_rule_on_list (cdr expression_list) pattern rule))
                  (cons (car expression_list) temp) )
                 (t nil) ) )
 
+(defun try_rule1 (expression pattern rule)
+	; Does the real work of searching down through the expression
+	; to see if the rule can be applied anywhere in it
+        (cond
+                ((atom expression) nil)
+                ((match pattern expression)
+                 (fire rule) )
+                (t (try_rule_on_list expression pattern rule)) ) )
 
 (defun try_rule (rule expression)
+	; Applies one rule to an expression or one of its subexpressions;
+	; if the rule is successful, returns the transformed formula; it 
+	; returns NIL otherwise
         (prog (rule_goal pattern action)
                 (setq rule_goal (car rule))
                 (setq pattern (cadr rule))
                 (setq action (caddr rule))
                 (cond ((not (eq current_goal rule_goal)) (return nil)))
-                (return (try_rule1 expression)) ) )    
+                (return (try_rule1 expression pattern rule)) ) )    
 
 
 (defun try_rules (rules_left)
-	(cond ((null rules_left) nil)
+	; Tries each rule on the list given until one succeds or the 
+	; end of the list is reached or the current formula is no 
+	; long a list. If a rule fires, returns the current formula;
+	; otherwise, it returns NIL
+	(cond 
+		((null rules_left) nil)
 		((atom current_formula) nil)
 		((setq temp
 			(try_rule (car rules_left) current_formula) )
 			(setq current_formula temp) )
 		(t (try_rules (cdr rules_left)))
-		) )
-
-
-(defun fire ()
-	(prog ()
-		(princ (caddr (cdr rule)))
-		(princ " ")
-		(princ 'fires)
-		(return (eval action))
 		) )
 
 (defun control()
@@ -221,3 +236,9 @@
 (setq fo '(d (+ (expt x 2) (* 2 x)) x))
 (setq current_formula fo)
 
+;(trace control)
+;(trace try_rules)
+;(trace try_rule)
+;(trace try_rule1)
+;(trace try_rule_on_list)
+;(trace fire)
