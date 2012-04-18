@@ -104,12 +104,24 @@
 		; MATCH WITH *
 		((eq (caar p) '*)
 		 (cond 
+
+			; if the rest of pattern matches with the rest of the
+			; s-expression, set the var only to one element and 
+			; return true 
 			((and s (match6 (cdr p) (cdr s))) 	; subcase 1
 			 (set (cadar p) (list (car s))) t )
+
+			; if the rest of pattern matches ok with the s-expression, 
+			; returns true and doesn't set anything in the var
 			((match6 (cdr p) s) 			; subcase2
 			 (set (cadar p) nil) t )
+			
+			; If the pattern matches ok with the rest of the s-expression,
+			; returns true and set the var, cons'ing a head in the 
+			; begining of the value of the var
 			((and s (match6 p (cdr s)))		; subcase 3
 			 (set (cadar p) (cons (car s) (eval (cadar p)))) t )
+
 			(t nil) ) )
 
 		; MATCH WITH A PREDICATE, SET TO THE VAR ON SUCCESS
