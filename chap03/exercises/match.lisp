@@ -43,13 +43,61 @@
 			(t nil) ) )
 
 		; MATCH WITH A PREDICATE, SET TO THE VAR ON SUCCESS
-                ((and
-			s
-                        (apply (caar p) (list (car s)))
-                        (match7 (cdr p) (cdr s)) )
-                 (set (cadar p) (car s)) ; Set the head of the tail of the head of p(the second element of (car p) ) to the value of the head of s
-                 t ) ; ... and return true
+		; these functions match lists of length 2, so we
+		; must take into account that s must be of length >= 2
+
+		; Base case: the list has 2 elements, try to match on those 2
+		((and s (= (length s) 2))
+		 (cond (
+			(apply (caar p) (list (list (car s) (cadr s))))
+
+			(set (cadar p) (list (car s) (cadr s)))
+			t
+			)
+			(t nil)	
+		))
+		
+		; Complex case: the list has more than 2 elements
+		((and s (> (length s) 2))
+		(cond
+			; Case 1
+			; The 2 first elements match and the pattern
+			; matches the rest of the s-expression
+			; set var as a list consisting of the first element
+			; of the list and the cdr is whatever already was there
+			((and 					
+				(apply (caar p) (list (list (car s) (cadr s))))
+				(match7 p (cdr s)) )
+			
+				(set (cadar p) (cons (car s) (eval (cadar p))))
+				t )		
+
+                        ; Case 2
+                        ; The 2 first elements match and the rest of the
+                        ; pattern matches the rest of the s-expression
+                        ; set var to a list of 2 elements
+                        ((and
+                                (apply (caar p) (list (list (car s) (cadr s))))
+                                (match7 (cdr p) (cdr (cdr s))) )
+                                        
+                                (set (cadar p) (list (car s) (cadr s)))
+                                t )
+
+
+			) )
+
+
                 (t nil)  ; extremal clause
                 ) )
 
+; These works:
+; (match7 '(101 (increasing x) (increasing y)) '(101 2 4 6 8 3 5 7))
+; x = (2 4 6 8)
+; y = (3 5 7)
 
+; (match7 '(101 (increasing x) (* y)) '(101 2 4 6 8 3 5 7))
+; x = (2 4 6 8)
+; y = (3 5 7)
+
+; (match7 '(101 (increasing x) a) '(101 2 4 6 8 a))
+; x = (2 4 6 8)
