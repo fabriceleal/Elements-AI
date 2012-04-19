@@ -13,6 +13,26 @@
 		(t nil)
 		) )
 
+(defun decreasing (lst)
+	(cond ((or (null lst) (atom lst) (= 1 (length lst))) nil) 
+                ((and (= 2 (length lst)))
+                        (and (numberp (car lst)) (numberp (cadr lst)) (> (car lst) (cadr lst))))
+                ((and (numberp (car lst)) (numberp (cadr lst)) (> (car lst) (cadr lst)))
+                        (decreasing (cdr lst)) )
+                (t nil)
+                )  )
+
+(defun same (lst)
+	(cond ((or (null lst) (atom lst) (= 1 (length lst))) nil)
+		((and (= 2 (length lst)))
+			(and (numberp (car lst)) (numberp (cadr lst)) (= (car lst) (cadr lst))))
+		((and (numberp (car lst)) (numberp (cadr lst)) (= (car lst) (cadr lst)))
+			(same (cdr lst))
+		)
+		(t nil)
+		) )
+
+
 (defun match7 (p s)
         (cond
                 ((null p) (null s)) ; if both are null, match!
@@ -101,3 +121,47 @@
 
 ; (match7 '(101 (increasing x) a) '(101 2 4 6 8 a))
 ; x = (2 4 6 8)
+
+
+; Exercise 10
+
+(setq p1 '((increasing x) (same y) (decreasing z)))
+(setq p2 '((decreasing x) (same y) (increasing z)))
+(setq s1 '(1 2 3 3 3 2 1))
+(setq s2 '(5 4 4 4 4 5))
+
+; Nulify
+(setq x nil)
+(setq y nil)
+(setq z nil)
+
+(print (match7 p1 s1))
+(print (list x y z))
+
+; Nulify
+(setq x nil)
+(setq y nil)
+(setq z nil)
+
+(print (match7 p1 s2))
+(print (list x y z))
+
+; Nulify
+(setq x nil)
+(setq y nil)
+(setq z nil) 
+
+(print (match7 p2 s1))
+(print (list x y z))
+
+; Nulify
+(setq x nil)
+(setq y nil)
+(setq z nil)
+
+(print (match7 p2 s2))
+(print (list x y z))
+
+
+
+
