@@ -108,11 +108,21 @@
 			; if the rest of pattern matches with the rest of the
 			; s-expression, set the var only to one element and 
 			; return true 
+
+			; Due to this rule, if you do:
+			; (match '((* x) (* y)) '(1 2 3 4 5 6))
+			; you will get:
+			; x = (1)
+			; y = (2 3 4 5 6)
+
 			((and s (match6 (cdr p) (cdr s))) 	; subcase 1
 			 (set (cadar p) (list (car s))) t )
 
 			; if the rest of pattern matches ok with the s-expression, 
 			; returns true and doesn't set anything in the var
+			
+			; This is the "zero" of zero-* ocorrences of anything.
+
 			((match6 (cdr p) s) 			; subcase2
 			 (set (cadar p) nil) t )
 			
