@@ -260,6 +260,7 @@
 
 (setq current_goal 'differentiate)
 (setq fo '(d (+ (expt x 2) (* 2 x)) x))
+(setq fo '(d (+ x (sin (* 2 x)))))
 (setq current_formula fo)
 
 ;(trace control)
