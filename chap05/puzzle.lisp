@@ -55,7 +55,7 @@
 (defun matchnorth (trial state)
 	(eq (caddr trial) ; north side of rotated new piece
 		(car (apply 'orient 			
-			(nth (- box_width 1) state) )) ) )
+			(nth (- (mlength state) 2) state) )) ) )
 				; south side of square to the north
 
 
@@ -124,9 +124,9 @@
 			(t nil) ) ) )
 
 
-;(trace tryorientation)
-;(trace trypiece)
-;(trace solve_squares)
-;(trace sidesok)
-;(trace matchnorth)
-;(trace matchwest)
+(trace tryorientation)
+(trace trypiece)
+(trace solve_squares)
+(trace sidesok)
+(trace matchnorth)
+(trace matchwest)
