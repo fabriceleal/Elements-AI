@@ -91,7 +91,7 @@
 
 
 (defun test ()
-	(prog (mcount)
+	(prog () ;(mcount)
 		(setq mcount 0)
 		(solve_squares nil pieces_avail) ) )
 
@@ -124,9 +124,9 @@
 			(t nil) ) ) )
 
 
-(trace tryorientation)
-(trace trypiece)
+;(trace tryorientation)
+;(trace trypiece)
 ;(trace solve_squares)
 ;(trace sidesok)
-(trace matchnorth)
-(trace matchwest)
+;(trace matchnorth)
+;(trace matchwest)
