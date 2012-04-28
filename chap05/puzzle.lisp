@@ -7,6 +7,9 @@
 (putprop 'p3 '(st ha bx gr) 'pattern)
 (putprop 'p4 '(gr gr ha bx) 'pattern)
 
+; Piece order in status
+; (bottom_right bottom_left top_right top_left)
+
 (setq pieces_avail '(p1 p2 p3 p4))
 
 (setq box_width 2)
@@ -67,7 +70,7 @@
 
 
 (defun solve_squares (cur_state unused_pieces)
-	(cond ((null unused_pieces) (show cur_state))
+	(cond ((null unused_pieces) (show cur_state)) ; Solution found ...
 		(t 
 			(mapcar 
 				'trypiece 
@@ -77,10 +80,11 @@
 
 (defun show (soln)
 	(prog () 
-		;(setq mcount (+ mcount 1)) 
+		;(break)
+		(setq mcount (+ mcount 1)) 
 		(prin1 'solution)	
 		(princ " ")
-		;(prin1 mcount)
+		(princ mcount)
 		(princ ":")
 		(print soln) 
 		(terpri) ) )
@@ -106,18 +110,23 @@
 (defun tryorientation (lst_piece_or)
 	(let ((piece (car lst_piece_or)) 
 		(orientation (cadr lst_piece_or)) 
-		(cur_state (caddr lst_piece_or))
+		(cur_state (caddr lst_piece_or))		
 		(unused_pieces (cadddr lst_piece_or)) )
 
 		(cond ((sidesok piece orientation cur_state)
 			(solve_squares
 				(cons (list piece orientation) cur_state)
-				(delete piece unused_pieces) ) )
+				(delete piece unused_pieces) ) 
+			;(princ "piece: ") (princ piece) (terpri)
+			;(princ "unused: ")(princ unused_pieces)(terpri)
+			;(princ "avail: ") (princ pieces_avail)(terpri)
+			)
 			(t nil) ) ) )
 
-;(trace tryorientation)
-;(trace trypiece)
+
+(trace tryorientation)
+(trace trypiece)
 ;(trace solve_squares)
 ;(trace sidesok)
-;(trace matchnorth)
-;(trace matchwest)
+(trace matchnorth)
+(trace matchwest)
